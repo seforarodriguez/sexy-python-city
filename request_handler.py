@@ -1,5 +1,5 @@
 import json
-from characters import get_all_characters
+from views import get_all_characters, update_character
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
@@ -54,7 +54,45 @@ class HandleRequests(BaseHTTPRequestHandler):
     # A method that handles any PUT request.
     def do_PUT(self):
         """Handles PUT requests to the server"""
-        self.do_PUT()
+
+        # set response code to 204 (no content)
+        self._set_headers(204)
+
+        # Get the new content sent by client
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = json.loads(self.rfile.read(content_len))
+
+
+        # parse url to get the requested resource and primary key of edited item
+        (resource, id) = self._parse_url(self.path)
+
+        # if statement to check if resource requested is "characters"
+        if resource == "characters":
+            # run the update function, and pass the `id` as argument, and the PUT body as another
+            update_character(id, post_body)
+
+        # encode the updated dictionary
+        self.wfile.write("".encode())
+
+
+    def _parse_url(self, path):
+        """
+        # Parse the URL and extract the name of the resource and primary key (if exists)
+        """
+        path_params = path.split("/")
+        resource = path_params[1]
+        id = None
+
+        try:
+            id = int(path_params[2])
+        except IndexError:
+            pass # No route parameter exists: /metals
+        except ValueError:
+            pass # Request had trailing slash: /metals/
+
+        return (resource, id)
+
+
 
     def _set_headers(self, status):
         # Notice this Docstring also includes information about the arguments passed to the function

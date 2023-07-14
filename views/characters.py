@@ -17,6 +17,15 @@ characters = [
     }
 ]
 
+def update_character(id, body):
+    for index, character in enumerate(characters):
+        if character["id"] == id:
+            body["id"] = id
+            characters[index] = body
+            break
+
+
+
 
 def get_all_characters():
     return characters
