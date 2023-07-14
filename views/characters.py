@@ -17,6 +17,17 @@ characters = [
     }
 ]
 
+def delete_character(id):
+    character_index = -1
+    for index, character in enumerate(characters):
+        if character["id"] == id:
+            character_index = index
+            break
+
+    if character_index > -1:
+        characters.pop(character_index)
+        
+
 def update_character(id, body):
     for index, character in enumerate(characters):
         if character["id"] == id:

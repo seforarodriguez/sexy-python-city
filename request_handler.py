@@ -1,5 +1,5 @@
 import json
-from views import get_all_characters, update_character
+from views import get_all_characters, update_character, delete_character
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
@@ -50,6 +50,20 @@ class HandleRequests(BaseHTTPRequestHandler):
         post_body = self.rfile.read(content_len)
         response = { "payload": post_body }
         self.wfile.write(json.dumps(response).encode())
+
+    def do_DELETE(self):
+        # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self._parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "characters":
+            delete_character(id)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
 
     # A method that handles any PUT request.
     def do_PUT(self):
